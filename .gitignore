@@ -1,0 +1,35 @@
+# === CLion & IntelliJ IDEA ===
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# === CMake build directories ===
+cmake-build-*/
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# === Compiled object and binary files ===
+*.o
+*.obj
+*.so
+*.dll
+*.exe
+*.out
+*.a
+*.lib
+
+# === OS-specific files ===
+.DS_Store
+Thumbs.db
+
+# === Logs and temporary files ===
+*.log
+*.tmp
+*.swp
+
+# === Optional: backup files ===
+*~

@@ -13,4 +13,8 @@ add_executable(MiAGK sources/main.cpp
         headers/Rasterizer.h
         headers/SimpleRasterizer.h
         sources/SimpleRasterizer.cpp
-        sources/Rasterizer.cpp)
+        sources/Rasterizer.cpp
+        sources/Math.cpp
+        headers/VertexProcessor.h
+        sources/VertexProcessor.cpp
+)

@@ -10,6 +10,13 @@
 
 SimpleRasterizer::SimpleRasterizer(int w, int h) : Rasterizer(w, h) {
 }
+void SimpleRasterizer::triangleFromView(Math::Point p1, Math::Point p2, Math::Point p3, unsigned int r1,unsigned int g1,unsigned int b1, unsigned int r2,unsigned int g2,unsigned int b2, unsigned int r3,unsigned int g3,unsigned int b3) {
+    Math::Point p1View = vp.convertViewToNDC(p1);
+    Math::Point p2View = vp.convertViewToNDC(p2);
+    Math::Point p3View = vp.convertViewToNDC(p3);
+
+    triangle(p1View, p2View, p3View, r1,g1,b1, r2,g2,b2, r3,g3,b3);
+}
 
 void SimpleRasterizer::triangle(Math::Point p1, Math::Point p2, Math::Point p3, unsigned int r1,unsigned int g1,unsigned int b1, unsigned int r2,unsigned int g2,unsigned int b2, unsigned int r3,unsigned int g3,unsigned int b3) {
 
@@ -86,6 +93,19 @@ void SimpleRasterizer::triangle(Math::Point p1, Math::Point p2, Math::Point p3, 
                 float _b1 = (dy23 * (xNorm - p3.x) + dx32 * (yNorm - p3.y)) / (dy23 * dx13 + dx32 * dy13);
                 float _b2 = (dy31 * (xNorm - p3.x) + dx13 * (yNorm - p3.y)) / (dy31 * dx23 + dx13 * dy23);
                 float _b3 = 1 - _b1 - _b2;
+
+                _b1 = std::clamp(_b1, 0.0f, 1.0f);
+                _b2 = std::clamp(_b2, 0.0f, 1.0f);
+                _b3 = std::clamp(_b3, 0.0f, 1.0f);
+
+                // Sum normalization:
+                float sum = _b1 + _b2 + _b3;
+                if (sum > 0.0f) {
+                    _b1 /= sum;
+                    _b2 /= sum;
+                    _b3 /= sum;
+                }
+
 
                 float R = _b1 * r1+ _b2 * r2 + _b3 * r3;
                 float G = _b1 * g1+ _b2 * g2 + _b3 * g3;

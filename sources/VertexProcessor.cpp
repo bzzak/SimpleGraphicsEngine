@@ -14,6 +14,10 @@ VertexProcessor::VertexProcessor() {
 
 //VertexProcessor::~VertexProcessor() {}
 
+void VertexProcessor::resetTransformations() {
+    obj2world.loadIdentity();
+}
+
 Math::Point VertexProcessor::convertObjToNDC(Math::Point objCoord) {
     Math::float4 objFloat= {objCoord.x, objCoord.y, objCoord.z, 1.0};
     Math::float4 worldFloat= obj2world * objFloat;
@@ -78,12 +82,12 @@ void VertexProcessor::multByUniformScale(float v) {
 }
 
 void VertexProcessor::multByRotation(float a, Math::float3 v) {
-    float s = sin(a * M_PI/180), c = cos(a * M_PI/180);
+    //float s = sin(a * M_PI/180), c = cos(a * M_PI/180);
     v.normalize();
     Math::float4x4 m;
     m.loadIdentity();
     m.setRotationAxis(a, v);
-    m[0] = Math::float4();
+    //m[0] = Math::float4();
 
     obj2world = m * obj2world;
 }

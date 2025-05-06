@@ -22,6 +22,9 @@ public:
     void multByScale(Math::float3 v);
     void multByUniformScale(float v);
     void multByRotation(float a, Math::float3 v);
+
+    void resetTransformations();
+
 };
 
 #endif //VERTEXPROCESSOR_H

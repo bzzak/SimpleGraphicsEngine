@@ -15,7 +15,7 @@
 
 int main() {
 
-    auto simpleRasterizer = SimpleRasterizer(800,800);
+    auto simpleRasterizer = SimpleRasterizer(1500,1500);
 
     simpleRasterizer.setEye({0.0f, 0.0f, 3.0f});
     simpleRasterizer.setCenter({0.0f, 0.0f, -1.0f});
@@ -43,7 +43,7 @@ int main() {
     cone->scale(simpleRasterizer,{1.0f, 1.0f, 1.0f});
     cone->uniformScale(simpleRasterizer,0.75f);
     cone->rotate(simpleRasterizer, 0.0f, {1.0f, 0.0f, 0.0f});
-    cone->translate(simpleRasterizer, {1.2f, -0.5f, -2.0f});
+    cone->translate(simpleRasterizer, {0.6f, 0.0f, -1.0f});
 
    // Mesh* cylinder = new Cylinder(30,6);
     //cylinder->makeNormals();
@@ -54,7 +54,7 @@ int main() {
     Mesh* sphere = new Sphere(30, 30);
 
     sphere->scale(simpleRasterizer,{1.0f, 1.0f, 1.0f});
-    sphere->uniformScale(simpleRasterizer,1.25f);
+    sphere->uniformScale(simpleRasterizer,0.75f);
     sphere->rotate(simpleRasterizer, 45.0f, {1.0f, 0.0f, 0.0f});
     sphere->translate(simpleRasterizer, {-0.8f, 0.0f, 0.0f});
 

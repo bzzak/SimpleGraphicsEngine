@@ -12,7 +12,7 @@ protected:
 
 public:
 
-    Buffer(int w, int h, float _maxDepth = 100);
+    Buffer(int w, int h, float _maxDepth = 10000);
     ~Buffer();
 
     [[nodiscard]] int getWidth() const {

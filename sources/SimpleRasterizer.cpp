@@ -30,6 +30,8 @@ void SimpleRasterizer::triangleFromView(Math::Point p1, Math::Point p2, Math::Po
 
 void SimpleRasterizer::triangle(Math::Point p1, Math::Point p2, Math::Point p3, Math::Integer3 color1, Math::Integer3 color2, Math::Integer3 color3) {
 
+    const float epsilon = 0.0000000000000000001f;
+
     float minX = std::min({p1.x,p2.x, p3.x});
     float maxX = std::max({p1.x,p2.x, p3.x});
     float minY = std::min({p1.y,p2.y, p3.y});
@@ -82,20 +84,20 @@ void SimpleRasterizer::triangle(Math::Point p1, Math::Point p2, Math::Point p3, 
         for (int y = minY; y < maxY; y++) {
 
             if ((isTopLeftEdge12 &&
-                _dx12 * (y - _p1.y) - _dy12 * (x - _p1.x) == 0 &&
-                _dx23 * (y - _p2.y) - _dy23 * (x - _p2.x) > 0 &&
-                _dx31 * (y - _p3.y) - _dy31 * (x - _p3.x) > 0) ||
+                std::abs(_dx12 * (y - _p1.y) - _dy12 * (x - _p1.x)) <= epsilon &&
+                _dx23 * (y - _p2.y) - _dy23 * (x - _p2.x) >= -epsilon &&
+                _dx31 * (y - _p3.y) - _dy31 * (x - _p3.x) >= -epsilon) ||
                 (isTopLeftEdge23 &&
-                _dx12 * (y - _p1.y) - _dy12 * (x - _p1.x) > 0 &&
-                _dx23 * (y - _p2.y) - _dy23 * (x - _p2.x) == 0 &&
-                _dx31 * (y - _p3.y) - _dy31 * (x - _p3.x) > 0) ||
+                _dx12 * (y - _p1.y) - _dy12 * (x - _p1.x) >= -epsilon &&
+                std::abs(_dx23 * (y - _p2.y) - _dy23 * (x - _p2.x)) <= epsilon &&
+                _dx31 * (y - _p3.y) - _dy31 * (x - _p3.x) >= -epsilon) ||
                 (isTopLeftEdge31 &&
-                _dx12 * (y - _p1.y) - _dy12 * (x - _p1.x) > 0 &&
-                _dx23 * (y - _p2.y) - _dy23 * (x - _p2.x) > 0 &&
-                _dx31 * (y - _p3.y) - _dy31 * (x - _p3.x) == 0) ||
-                (_dx12 * (y - _p1.y) - _dy12 * (x - _p1.x) > 0 &&
-                 _dx23 * (y - _p2.y) - _dy23 * (x - _p2.x) > 0 &&
-                 _dx31 * (y - _p3.y) - _dy31 * (x - _p3.x) > 0 )) {
+                _dx12 * (y - _p1.y) - _dy12 * (x - _p1.x) >= -epsilon &&
+                _dx23 * (y - _p2.y) - _dy23 * (x - _p2.x) >= -epsilon &&
+                std::abs(_dx31 * (y - _p3.y) - _dy31 * (x - _p3.x)) <= epsilon) ||
+                (_dx12 * (y - _p1.y) - _dy12 * (x - _p1.x) >= -epsilon &&
+                 _dx23 * (y - _p2.y) - _dy23 * (x - _p2.x) >= -epsilon &&
+                 _dx31 * (y - _p3.y) - _dy31 * (x - _p3.x) >= -epsilon )) {
 
                 float xNorm = 2.0f * (x / static_cast<float>(buffer.getWidth())) - 1.0f;
                 float yNorm = 2.0f * (y / static_cast<float>(buffer.getHeight())) - 1.0f;

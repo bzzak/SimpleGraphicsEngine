@@ -32,4 +32,9 @@ add_executable(MiAGK sources/main.cpp
         sources/Sphere.cpp
         headers/Torus.h
         sources/Torus.cpp
+        headers/Light.h
+        headers/DirectionalLight.h
+        sources/DirectionalLight.cpp
+        headers/PointLight.h
+        sources/PointLight.cpp
 )

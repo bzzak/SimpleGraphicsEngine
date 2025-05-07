@@ -170,6 +170,10 @@ namespace Math {
         return {this->x * o, this->y * o, this->z * o};
     }
 
+    float3 float3::operator*(const float3 &v) const {
+        return {this->x * v.x, this->y * v.y, this->z * v.z};
+    }
+
     float3 operator*(float o, const float3 &v) {
         return {o * v.x, o * v.y, o * v.z};
     }

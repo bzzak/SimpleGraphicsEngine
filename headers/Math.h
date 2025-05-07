@@ -98,6 +98,8 @@ namespace Math {
 
         float3 operator*(float o) const;
 
+        float3 operator*(const float3 &v) const;
+
         friend float3 operator*(float o, const float3 &v);
 
         float3 operator/(float o) const;

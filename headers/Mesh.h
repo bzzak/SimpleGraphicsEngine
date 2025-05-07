@@ -1,13 +1,26 @@
 #ifndef MESH_H
 #define MESH_H
 
+#include <algorithm>
+#include <vector>
+
+#include "../headers/Light.h"
 #include "../headers/Rasterizer.h"
 #include "../headers/Vertex.h"
+
+
+struct Material {
+    Math::float3 diffuse = {1.0f, 0.0f, 0.0f};
+    Math::float3 specular = {0.05f, 0.05f, 0.05f};
+    float shininess = 5.0f;
+};
+
 
 class Mesh {
 protected:
     int vSize;
     int tSize;
+    Material material;
     Vertex* vertices;
     Math::Integer3* indices;
     Math::float4x4 currentTransformations;
@@ -30,6 +43,7 @@ public:
 
     void draw(Rasterizer& rasterizer, Math::Integer3 color1, Math::Integer3 color2, Math::Integer3 color3) const;
     void draw(Rasterizer& rasterizer, Math::Integer3 color) const;
+    void drawPhong(Rasterizer& rasterizer, const std::vector<Light*>& lights) const;
     void makeNormals();
 
     void scale(Rasterizer& rasterizer, Math::float3 s);
@@ -38,6 +52,9 @@ public:
     void rotate(Rasterizer& rasterizer, float angle, Math::float3 axis);
 
     void setTransformations(Rasterizer& rasterizer) const;
+    void setDiffuseColor(Math::float3 color) { material.diffuse = {std::clamp(color.x, 0.0f, 1.0f), std::clamp(color.y, 0.0f, 1.0f), std::clamp(color.z, 0.0f, 1.0f) }; }
+    void setSpecularColor(Math::float3 color) { material.specular = {std::clamp(color.x, 0.0f, 1.0f), std::clamp(color.y, 0.0f, 1.0f), std::clamp(color.z, 0.0f, 1.0f) }; }
+    void setShininess(float shininess) { material.shininess = shininess; }
 };
 
 

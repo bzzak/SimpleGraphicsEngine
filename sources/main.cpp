@@ -11,6 +11,8 @@
 #include "../headers/Cylinder.h"
 #include "../headers/Sphere.h"
 #include "../headers/Torus.h"
+#include "../headers/DirectionalLight.h"
+#include "../headers/PointLight.h"
 
 
 int main() {
@@ -27,6 +29,27 @@ int main() {
     //simpleRasterizer.setAspect(4.0f/3.0f);
     simpleRasterizer.setPlanes(0.1f, 100.0f);
 
+
+    std::vector<Light*> lights;
+
+    auto* directionalLight1 = new DirectionalLight({0.3f, -1.0f, 0.0f});
+    directionalLight1->setAmbientColor({0.05f, 0.05f, 0.05f});
+    directionalLight1->setDiffuseColor({0.7f, 0.7f, 0.7f});
+    directionalLight1->setSpecularColor({0.2f, 0.2f, 0.2f});
+
+    lights.push_back(directionalLight1);
+
+    auto* pointLight1 = new PointLight({-1.5f, 0.0f, 0.0f});
+    pointLight1->setAmbientColor({0.05f, 0.05f, 0.05f});
+    pointLight1->setDiffuseColor({1.0f, 0.0f, 0.0f});
+    pointLight1->setSpecularColor({0.0f, 1.0f, 0.0f});
+
+    lights.push_back(pointLight1);
+
+
+
+
+
     //Mesh* mesh = new SimpleTriangle();
 
     //mesh->scale(simpleRasterizer,{0.5f, 0.5f, 1.0f});
@@ -39,11 +62,16 @@ int main() {
     //cube->rotate(simpleRasterizer, 45.0f, {1.0f, 0.0f, 0.0f});
 
     Mesh* cone = new Cone(50);
+    cone->makeNormals();
+
+    cone->setDiffuseColor({0.0f, 0.0f, 1.0f});
+    cone->setSpecularColor({0.25f, 0.25f, 0.25f});
+    cone->setShininess(16.0f);
 
     cone->scale(simpleRasterizer,{1.0f, 1.0f, 1.0f});
     cone->uniformScale(simpleRasterizer,0.75f);
-    cone->rotate(simpleRasterizer, 0.0f, {1.0f, 0.0f, 0.0f});
-    cone->translate(simpleRasterizer, {0.6f, 0.0f, -1.0f});
+    cone->rotate(simpleRasterizer, -30.0f, {1.0f, 0.0f, 0.0f});
+    cone->translate(simpleRasterizer, {0.6f, 2.5f, -1.0f});
 
    // Mesh* cylinder = new Cylinder(30,6);
     //cylinder->makeNormals();
@@ -52,31 +80,45 @@ int main() {
     //cylinder->rotate(simpleRasterizer, 0.0f, {1.0f, 0.0f, 0.0f});
 
     Mesh* sphere = new Sphere(30, 30);
+    sphere->makeNormals();
+
+    sphere->setDiffuseColor({0.0f, 1.0f, 1.0f});
+    sphere->setSpecularColor({0.6f, 0.6f, 0.6f});
+    sphere->setShininess(64.0f);
 
     sphere->scale(simpleRasterizer,{1.0f, 1.0f, 1.0f});
     sphere->uniformScale(simpleRasterizer,0.75f);
     sphere->rotate(simpleRasterizer, 45.0f, {1.0f, 0.0f, 0.0f});
-    sphere->translate(simpleRasterizer, {-0.8f, 0.0f, 0.0f});
+    sphere->translate(simpleRasterizer, {1.5f, 0.0f, 0.0f});
 
     simpleRasterizer.resetTransformations();
 
     Mesh* torus = new Torus(30, 30);
+    torus->makeNormals();
 
-    torus->scale(simpleRasterizer,{0.5f, 0.5f, 0.5f});
-    torus->rotate(simpleRasterizer, -45.0f, {1.0f, 0.0f, 0.0f});
-    torus->translate(simpleRasterizer, {1.5f, 2.0f, 0.0f});
+    torus->setDiffuseColor({1.0f, 1.0f, 0.0f});
+    torus->setSpecularColor({1.0f, 1.0f, 1.0f});
+    torus->setShininess(128.0f);
+
+    torus->scale(simpleRasterizer,{1.0f, 1.0f, 1.0f});
+    torus->uniformScale(simpleRasterizer,1.2f);
+    torus->rotate(simpleRasterizer, 45.0f, {1.0f, 0.0f, 0.0f});
+    torus->translate(simpleRasterizer, {-0.7f, 0.0f, 0.0f});
 
     simpleRasterizer.setBackground(0,0,0);
 
     //mesh->draw(simpleRasterizer, {255, 0, 0});
     //cube->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
     cone->setTransformations(simpleRasterizer);
-    cone->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
+    //cone->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
+    cone->drawPhong(simpleRasterizer, lights);
     //cylinder->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
     sphere->setTransformations(simpleRasterizer);
-    sphere->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
+    //sphere->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
+    sphere->drawPhong(simpleRasterizer, lights);
     torus->setTransformations(simpleRasterizer);
-    torus->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
+    //torus->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
+    torus->drawPhong(simpleRasterizer, lights);
 
 
 
@@ -87,8 +129,13 @@ int main() {
     //delete cube;
     delete cone;
     //delete cylinder;
-    delete sphere;
+    //delete sphere;
     delete torus;
+
+    for (auto light : lights) {
+        delete light;
+    }
+
 
     return 0;
 }

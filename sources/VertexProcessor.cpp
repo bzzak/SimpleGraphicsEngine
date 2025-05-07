@@ -46,6 +46,7 @@ void VertexProcessor::setLookAt(Math::float3 eye, Math::float3 center, Math::flo
     f.normalize();
     up.normalize();
     Math::float3 s = f.cross(up);
+    s.normalize();
     Math::float3 u = s.cross(f);
     world2view[0] = Math::float4(s.x, u.x, -f.x, 0);
     world2view[1] = Math::float4(s.y, u.y, -f.y, 0);
@@ -90,6 +91,10 @@ void VertexProcessor::multByRotation(float a, Math::float3 v) {
     //m[0] = Math::float4();
 
     obj2world = m * obj2world;
+}
+
+void VertexProcessor::setObjectToWorld(Math::float4x4 m) {
+    obj2world = m;
 }
 
 

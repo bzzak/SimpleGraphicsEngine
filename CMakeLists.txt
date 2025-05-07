@@ -17,4 +17,19 @@ add_executable(MiAGK sources/main.cpp
         sources/Math.cpp
         headers/VertexProcessor.h
         sources/VertexProcessor.cpp
+        headers/Vertex.h
+        headers/Mesh.h
+        sources/Mesh.cpp
+        headers/SimpleTriangle.h
+        sources/SimpleTriangle.cpp
+        headers/Cube.h
+        sources/Cube.cpp
+        headers/Cone.h
+        sources/Cone.cpp
+        headers/Cylinder.h
+        sources/Cylinder.cpp
+        headers/Sphere.h
+        sources/Sphere.cpp
+        headers/Torus.h
+        sources/Torus.cpp
 )

@@ -3,8 +3,19 @@
 #define MATH_H
 
 #include <ostream>
+#define M_PI 3.14159265358979323846
 
 namespace Math {
+
+    struct Integer3 {
+        int x, y, z;
+
+        Integer3() = default;
+        Integer3(int _x, int _y, int _z) : x(_x), y(_y), z(_z) {}
+
+        friend std::ostream &operator<<(std::ostream &os, const Integer3 &v);
+    };
+
 
     struct Point {
         float x, y, z=0;

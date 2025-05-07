@@ -22,6 +22,7 @@ public:
     void multByScale(Math::float3 v);
     void multByUniformScale(float v);
     void multByRotation(float a, Math::float3 v);
+    void setObjectToWorld(Math::float4x4 m);
 
     void resetTransformations();
 

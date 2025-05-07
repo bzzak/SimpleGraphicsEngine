@@ -32,6 +32,10 @@ void Rasterizer::translate(Math::float3 v) {
 void Rasterizer::rotate(float a, Math::float3 v) {
     vp.multByRotation(a, v);
 }
+
+void Rasterizer::setTransformations(Math::float4x4 m) {
+    vp.setObjectToWorld(m);
+}
 void Rasterizer::resetTransformations() {
     vp.resetTransformations();
 }

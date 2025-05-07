@@ -8,6 +8,14 @@
 #include <algorithm>
 
 namespace Math {
+    // INTEGER3
+
+    std::ostream &operator<<(std::ostream &os, const Integer3 &v) {
+        os << "(" << v.x << ", " << v.y << ", " << v.z << ")";
+        return os;
+    }
+
+
     // POINT
 
     std::ostream &operator<<(std::ostream &os, const Point &p) {

@@ -29,9 +29,9 @@ public:
 
     // Virtual functions
 
-    virtual void triangleFromObj(Math::Point p1, Math::Point p2, Math::Point p3, unsigned int r1,unsigned int g1,unsigned int b1, unsigned int r2,unsigned int g2,unsigned int b2, unsigned int r3,unsigned int g3,unsigned int b3) = 0;
-    virtual void triangleFromView(Math::Point p1, Math::Point p2, Math::Point p3, unsigned int r1,unsigned int g1,unsigned int b1, unsigned int r2,unsigned int g2,unsigned int b2, unsigned int r3,unsigned int g3,unsigned int b3) = 0;
-    virtual void triangle(Math::Point p1, Math::Point p2, Math::Point p3, unsigned int r1,unsigned int g1,unsigned int b1, unsigned int r2,unsigned int g2,unsigned int b2, unsigned int r3,unsigned int g3,unsigned int b3) = 0;
+    virtual void triangleFromObj(Math::Point p1, Math::Point p2, Math::Point p3, Math::Integer3 color1, Math::Integer3 color2, Math::Integer3 color3) = 0;
+    virtual void triangleFromView(Math::Point p1, Math::Point p2, Math::Point p3, Math::Integer3 color1, Math::Integer3 color2, Math::Integer3 color3) = 0;
+    virtual void triangle(Math::Point p1, Math::Point p2, Math::Point p3, Math::Integer3 color1, Math::Integer3 color2, Math::Integer3 color3) = 0;
     virtual int save();
 
     // Transformations
@@ -40,6 +40,7 @@ public:
     void uniformScale(float v);
     void translate(Math::float3 v);
     void rotate(float a, Math::float3 v);
+    void setTransformations(Math::float4x4 m);
     void resetTransformations();
 
     // Getters

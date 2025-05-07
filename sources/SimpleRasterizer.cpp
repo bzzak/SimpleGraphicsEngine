@@ -1,9 +1,11 @@
 #include "../headers/SimpleRasterizer.h"
+#include "../headers/Buffer.h"
+
 #include <iostream>
 #include <ostream>
 #include <algorithm>
 
-#include "../headers/Buffer.h"
+
 
 
 
@@ -11,22 +13,22 @@
 SimpleRasterizer::SimpleRasterizer(int w, int h) : Rasterizer(w, h) {
 }
 
-void SimpleRasterizer::triangleFromObj(Math::Point p1, Math::Point p2, Math::Point p3, unsigned int r1,unsigned int g1,unsigned int b1, unsigned int r2,unsigned int g2,unsigned int b2, unsigned int r3,unsigned int g3,unsigned int b3) {
+void SimpleRasterizer::triangleFromObj(Math::Point p1, Math::Point p2, Math::Point p3, Math::Integer3 color1, Math::Integer3 color2, Math::Integer3 color3) {
     Math::Point p1View = vp.convertObjToNDC(p1);
     Math::Point p2View = vp.convertObjToNDC(p2);
     Math::Point p3View = vp.convertObjToNDC(p3);
 
-    triangle(p1View, p2View, p3View, r1,g1,b1, r2,g2,b2, r3,g3,b3);
+    triangle(p1View, p2View, p3View, color1, color2, color3);
 }
-void SimpleRasterizer::triangleFromView(Math::Point p1, Math::Point p2, Math::Point p3, unsigned int r1,unsigned int g1,unsigned int b1, unsigned int r2,unsigned int g2,unsigned int b2, unsigned int r3,unsigned int g3,unsigned int b3) {
+void SimpleRasterizer::triangleFromView(Math::Point p1, Math::Point p2, Math::Point p3, Math::Integer3 color1, Math::Integer3 color2, Math::Integer3 color3) {
     Math::Point p1View = vp.convertViewToNDC(p1);
     Math::Point p2View = vp.convertViewToNDC(p2);
     Math::Point p3View = vp.convertViewToNDC(p3);
 
-    triangle(p1View, p2View, p3View, r1,g1,b1, r2,g2,b2, r3,g3,b3);
+    triangle(p1View, p2View, p3View, color1, color2, color3);
 }
 
-void SimpleRasterizer::triangle(Math::Point p1, Math::Point p2, Math::Point p3, unsigned int r1,unsigned int g1,unsigned int b1, unsigned int r2,unsigned int g2,unsigned int b2, unsigned int r3,unsigned int g3,unsigned int b3) {
+void SimpleRasterizer::triangle(Math::Point p1, Math::Point p2, Math::Point p3, Math::Integer3 color1, Math::Integer3 color2, Math::Integer3 color3) {
 
     float minX = std::min({p1.x,p2.x, p3.x});
     float maxX = std::max({p1.x,p2.x, p3.x});
@@ -115,9 +117,9 @@ void SimpleRasterizer::triangle(Math::Point p1, Math::Point p2, Math::Point p3, 
                 }
 
 
-                float R = _b1 * r1+ _b2 * r2 + _b3 * r3;
-                float G = _b1 * g1+ _b2 * g2 + _b3 * g3;
-                float B = _b1 * b1+ _b2 * b2 + _b3 * b3;
+                float R = _b1 * color1.x + _b2 * color2.x + _b3 * color3.x;
+                float G = _b1 * color1.y + _b2 * color2.y + _b3 * color3.y;
+                float B = _b1 * color1.z + _b2 * color2.z + _b3 * color3.z;
 
                 float depth = _b1 * _p1.z + _b2 * _p2.z + _b3 * _p3.z;
                 int targetIndex = y * buffer.getWidth() + x;

@@ -5,45 +5,90 @@
 #include "../headers/SimpleRasterizer.h"
 #include "../headers/Math.h"
 #include "../headers/VertexProcessor.h"
+#include "../headers/SimpleTriangle.h"
+#include "../headers/Cube.h"
+#include "../headers/Cone.h"
+#include "../headers/Cylinder.h"
+#include "../headers/Sphere.h"
+#include "../headers/Torus.h"
 
 
 int main() {
 
-    auto simpleRasterizer = SimpleRasterizer(800,600);
+    auto simpleRasterizer = SimpleRasterizer(800,800);
 
-    simpleRasterizer.setEye({0.0f, 0.0f, 0.0f});
+    simpleRasterizer.setEye({0.0f, 0.0f, 3.0f});
     simpleRasterizer.setCenter({0.0f, 0.0f, -1.0f});
     simpleRasterizer.setUp({0.0f, 1.0f, 0.0f});
 
     simpleRasterizer.setFovy(65.0f);
-    simpleRasterizer.setAspect(16.0f/9.0f);
-    //simpleRasterizer.setAspect(1.0f);
+    //simpleRasterizer.setAspect(16.0f/9.0f);
+    simpleRasterizer.setAspect(1.0f);
     //simpleRasterizer.setAspect(4.0f/3.0f);
     simpleRasterizer.setPlanes(0.1f, 100.0f);
 
-    // Transformations
+    //Mesh* mesh = new SimpleTriangle();
 
-    simpleRasterizer.scale({2.0f, 2.0f, 1.0f});
-    simpleRasterizer.rotate(90.0f, {0.0f, 0.0f, 1.0f});
-    simpleRasterizer.translate({2.0f, 1.0f, 0.0f});
+    //mesh->scale(simpleRasterizer,{0.5f, 0.5f, 1.0f});
+    //mesh->rotate(simpleRasterizer, 90.0f, {0.0f, 0.0f, 1.0f});
+    //mesh->translate(simpleRasterizer, {0.5f, 0.5f, 0.0f});
 
+    //Mesh* cube = new Cube();
 
-    simpleRasterizer.setBackground(0,0,0);
+    //cube->rotate(simpleRasterizer, 45.0f, {0.0f, 1.0f, 0.0f});
+    //cube->rotate(simpleRasterizer, 45.0f, {1.0f, 0.0f, 0.0f});
 
+    Mesh* cone = new Cone(50);
 
-    simpleRasterizer.triangleFromObj({ 0.0f, 0.41f, -4.0f }, {0.41f, -0.41f, -4.0f}, { -0.41f, -0.41f, -4.0f }, 0, 255, 0, 255, 0, 0, 0, 0, 255);
+    cone->scale(simpleRasterizer,{1.0f, 1.0f, 1.0f});
+    cone->uniformScale(simpleRasterizer,0.75f);
+    cone->rotate(simpleRasterizer, 0.0f, {1.0f, 0.0f, 0.0f});
+    cone->translate(simpleRasterizer, {1.2f, -0.5f, -2.0f});
+
+   // Mesh* cylinder = new Cylinder(30,6);
+    //cylinder->makeNormals();
+
+    //cylinder->scale(simpleRasterizer,{2.0f, 2.0f, 1.0f});
+    //cylinder->rotate(simpleRasterizer, 0.0f, {1.0f, 0.0f, 0.0f});
+
+    Mesh* sphere = new Sphere(30, 30);
+
+    sphere->scale(simpleRasterizer,{1.0f, 1.0f, 1.0f});
+    sphere->uniformScale(simpleRasterizer,1.25f);
+    sphere->rotate(simpleRasterizer, 45.0f, {1.0f, 0.0f, 0.0f});
+    sphere->translate(simpleRasterizer, {-0.8f, 0.0f, 0.0f});
 
     simpleRasterizer.resetTransformations();
 
-    simpleRasterizer.scale({15.0f, 15.0f, 1.0f});
-    simpleRasterizer.rotate(-45.0f, {0.0f, 0.0f, 1.0f});
-    simpleRasterizer.translate({3.0f, 2.0f, -10.0f});
+    Mesh* torus = new Torus(30, 30);
 
-    simpleRasterizer.triangleFromObj({ 0.0f, 0.41f, -4.0f }, {0.41f, -0.41f, -4.0f}, { -0.41f, -0.41f, -4.0f }, 255, 255, 0, 255, 255, 0, 255, 255, 0);
+    torus->scale(simpleRasterizer,{0.5f, 0.5f, 0.5f});
+    torus->rotate(simpleRasterizer, -45.0f, {1.0f, 0.0f, 0.0f});
+    torus->translate(simpleRasterizer, {1.5f, 2.0f, 0.0f});
 
-    //simpleRasterizer.triangleFromView({ 0.0f, 0.41f, -4.0f }, {0.41f, -0.41f, -4.0f}, { -0.41f, -0.41f, -4.0f }, 0, 255, 0, 255, 0, 0, 0, 0, 255);
+    simpleRasterizer.setBackground(0,0,0);
+
+    //mesh->draw(simpleRasterizer, {255, 0, 0});
+    //cube->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
+    cone->setTransformations(simpleRasterizer);
+    cone->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
+    //cylinder->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
+    sphere->setTransformations(simpleRasterizer);
+    sphere->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
+    torus->setTransformations(simpleRasterizer);
+    torus->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
+
+
+
 
     simpleRasterizer.save();
+
+    //delete mesh;
+    //delete cube;
+    delete cone;
+    //delete cylinder;
+    delete sphere;
+    delete torus;
 
     return 0;
 }

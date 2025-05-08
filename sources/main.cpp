@@ -32,7 +32,7 @@ int main() {
 
     std::vector<Light*> lights;
 
-    auto* directionalLight1 = new DirectionalLight({0.3f, -1.0f, 0.0f});
+    auto* directionalLight1 = new DirectionalLight({0.0f, -1.0f, -2.0f});
     directionalLight1->setAmbientColor({0.05f, 0.05f, 0.05f});
     directionalLight1->setDiffuseColor({0.7f, 0.7f, 0.7f});
     directionalLight1->setSpecularColor({0.2f, 0.2f, 0.2f});
@@ -71,7 +71,7 @@ int main() {
     cone->scale(simpleRasterizer,{1.0f, 1.0f, 1.0f});
     cone->uniformScale(simpleRasterizer,0.75f);
     cone->rotate(simpleRasterizer, -30.0f, {1.0f, 0.0f, 0.0f});
-    cone->translate(simpleRasterizer, {0.6f, 2.5f, -1.0f});
+    cone->translate(simpleRasterizer, {0.6f, 2.5f, -0.5f});
 
    // Mesh* cylinder = new Cylinder(30,6);
     //cylinder->makeNormals();
@@ -93,6 +93,20 @@ int main() {
 
     simpleRasterizer.resetTransformations();
 
+    Mesh* sphere2 = new Sphere(30, 30);
+    sphere2->makeNormals();
+
+    sphere2->setDiffuseColor({0.0f, 1.0f, 1.0f});
+    sphere2->setSpecularColor({0.6f, 0.6f, 0.6f});
+    sphere2->setShininess(64.0f);
+
+    sphere2->scale(simpleRasterizer,{1.0f, 1.0f, 1.0f});
+    sphere2->uniformScale(simpleRasterizer,0.75f);
+    sphere2->rotate(simpleRasterizer, 45.0f, {1.0f, 0.0f, 0.0f});
+    sphere2->translate(simpleRasterizer, {1.5f, 0.5f, -1.0f});
+
+    simpleRasterizer.resetTransformations();
+
     Mesh* torus = new Torus(30, 30);
     torus->makeNormals();
 
@@ -111,14 +125,17 @@ int main() {
     //cube->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
     cone->setTransformations(simpleRasterizer);
     //cone->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
-    cone->drawPhong(simpleRasterizer, lights);
+    cone->drawPhongPixel(simpleRasterizer, lights);
     //cylinder->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
     sphere->setTransformations(simpleRasterizer);
     //sphere->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
-    sphere->drawPhong(simpleRasterizer, lights);
+    sphere->drawPhongPixel(simpleRasterizer, lights);
+    sphere2->setTransformations(simpleRasterizer);
+    //sphere2->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
+    sphere2->drawPhong(simpleRasterizer, lights);
     torus->setTransformations(simpleRasterizer);
     //torus->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
-    torus->drawPhong(simpleRasterizer, lights);
+    torus->drawPhongPixel(simpleRasterizer, lights);
 
 
 
@@ -129,7 +146,8 @@ int main() {
     //delete cube;
     delete cone;
     //delete cylinder;
-    //delete sphere;
+    delete sphere;
+    delete sphere2;
     delete torus;
 
     for (auto light : lights) {

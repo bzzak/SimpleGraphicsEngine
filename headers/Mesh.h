@@ -5,9 +5,10 @@
 #include <vector>
 
 #include "../headers/Light.h"
-#include "../headers/Rasterizer.h"
+//#include "../headers/Rasterizer.h"
 #include "../headers/Vertex.h"
 
+class Rasterizer;
 
 struct Material {
     Math::float3 diffuse = {1.0f, 0.0f, 0.0f};
@@ -44,6 +45,8 @@ public:
     void draw(Rasterizer& rasterizer, Math::Integer3 color1, Math::Integer3 color2, Math::Integer3 color3) const;
     void draw(Rasterizer& rasterizer, Math::Integer3 color) const;
     void drawPhong(Rasterizer& rasterizer, const std::vector<Light*>& lights) const;
+    void drawPhongPixel(Rasterizer& rasterizer, const std::vector<Light*>& lights) const;
+
     void makeNormals();
 
     void scale(Rasterizer& rasterizer, Math::float3 s);

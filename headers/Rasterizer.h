@@ -4,6 +4,7 @@
 #include "../headers/Math.h"
 #include "../headers/TgaBuffer.h"
 #include "../headers/VertexProcessor.h"
+#include "../headers/Mesh.h"
 
 class Rasterizer {
 protected:
@@ -32,6 +33,7 @@ public:
     virtual void triangleFromObj(Math::Point p1, Math::Point p2, Math::Point p3, Math::Integer3 color1, Math::Integer3 color2, Math::Integer3 color3) = 0;
     virtual void triangleFromView(Math::Point p1, Math::Point p2, Math::Point p3, Math::Integer3 color1, Math::Integer3 color2, Math::Integer3 color3) = 0;
     virtual void triangle(Math::Point p1, Math::Point p2, Math::Point p3, Math::Integer3 color1, Math::Integer3 color2, Math::Integer3 color3) = 0;
+    virtual void trianglePhong(Math::Point p1, Math::Point p2, Math::Point p3, Math::float3 normal1, Math::float3 normal2, Math::float3 normal3, const Material& material, const Math::float3& cameraPos, const std::vector<Light*>& lights) = 0;
     virtual int save();
 
     // Transformations

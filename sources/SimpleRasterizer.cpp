@@ -4,21 +4,18 @@
 #include <iostream>
 #include <ostream>
 #include <algorithm>
-
-
-
-
+#include <cmath>
 
 
 SimpleRasterizer::SimpleRasterizer(int w, int h) : Rasterizer(w, h) {
 }
 
 void SimpleRasterizer::triangleFromObj(Math::Point p1, Math::Point p2, Math::Point p3, Math::Integer3 color1, Math::Integer3 color2, Math::Integer3 color3) {
-    Math::Point p1View = vp.convertObjToNDC(p1);
-    Math::Point p2View = vp.convertObjToNDC(p2);
-    Math::Point p3View = vp.convertObjToNDC(p3);
+    Math::Point p1proj = vp.convertObjToNDC(p1);
+    Math::Point p2proj = vp.convertObjToNDC(p2);
+    Math::Point p3proj = vp.convertObjToNDC(p3);
 
-    triangle(p1View, p2View, p3View, color1, color2, color3);
+    triangle(p1proj, p2proj, p3proj, color1, color2, color3);
 }
 void SimpleRasterizer::triangleFromView(Math::Point p1, Math::Point p2, Math::Point p3, Math::Integer3 color1, Math::Integer3 color2, Math::Integer3 color3) {
     Math::Point p1View = vp.convertViewToNDC(p1);
@@ -131,6 +128,146 @@ void SimpleRasterizer::triangle(Math::Point p1, Math::Point p2, Math::Point p3, 
                     buffer.setDepth(targetIndex, depth);
                  }
 
+            }
+        }
+    }
+
+
+}
+
+void SimpleRasterizer::trianglePhong(Math::Point p1, Math::Point p2, Math::Point p3, Math::float3 normal1, Math::float3 normal2, Math::float3 normal3, const Material& material, const Math::float3& cameraPos, const std::vector<Light*>& lights) {
+
+    Math::Point p1proj = vp.convertObjToNDC(p1);
+    Math::Point p2proj = vp.convertObjToNDC(p2);
+    Math::Point p3proj = vp.convertObjToNDC(p3);
+
+    const float epsilon = 0.0000000000000000001f;
+
+    float minX = std::min({p1proj.x,p2proj.x, p3proj.x});
+    float maxX = std::max({p1proj.x,p2proj.x, p3proj.x});
+    float minY = std::min({p1proj.y,p2proj.y, p3proj.y});
+    float maxY = std::max({p1proj.y,p2proj.y, p3proj.y});
+
+    maxX = std::min(static_cast<int>((maxX + 1) * buffer.getWidth() * .5f), buffer.getWidth());
+    maxY = std::min(static_cast<int>((maxY + 1) * buffer.getHeight() * .5f), buffer.getHeight());
+    minX = std::max(static_cast<int>((minX + 1) * buffer.getWidth() * .5f), 0);
+    minY = std::max(static_cast<int>((minY + 1) * buffer.getHeight() * .5f), 0);
+
+    float dx12 = p1proj.x - p2proj.x;
+    float dx21 = -dx12;
+    float dx23 = p2proj.x - p3proj.x;
+    float dx32 = -dx23;
+    float dx13 = p1proj.x - p3proj.x;
+    float dx31 = -dx13;
+    float dy12 = p1proj.y - p2proj.y;
+    float dy21 = -dy12;
+    float dy23 = p2proj.y - p3proj.y;
+    float dy32 = -dy23;
+    float dy31 = p3proj.y - p1proj.y;
+    float dy13 = -dy31;
+
+    auto _p1 =  Math::Point(static_cast<int>((p1proj.x + 1) * buffer.getWidth() * .5f), static_cast<int>((p1proj.y + 1) * buffer.getHeight() * .5f), static_cast<int>((p1proj.z + 1) * buffer.getMaxDepth() * .5f));
+    auto _p2 =  Math::Point(static_cast<int>((p2proj.x + 1) * buffer.getWidth() * .5f), static_cast<int>((p2proj.y + 1) * buffer.getHeight() * .5f), static_cast<int>((p2proj.z + 1) * buffer.getMaxDepth() * .5f));
+    auto _p3 =  Math::Point(static_cast<int>((p3proj.x + 1) * buffer.getWidth() * .5f), static_cast<int>((p3proj.y + 1) * buffer.getHeight() * .5f), static_cast<int>((p3proj.z + 1) * buffer.getMaxDepth() * .5f));
+
+    float _dx12 = _p1.x - _p2.x;
+    float _dx21 = -_dx12;
+    float _dx23 = _p2.x - _p3.x;
+    float _dx32 = -_dx23;
+    float _dx13 = _p1.x - _p3.x;
+    float _dx31 = -_dx13;
+    float _dy12 = _p1.y - _p2.y;
+    float _dy21 = -_dy12;
+    float _dy23 = _p2.y - _p3.y;
+    float _dy32 = -_dy23;
+    float _dy31 = _p3.y - _p1.y;
+    float _dy13 = -_dy31;
+
+    bool isTopLeftEdge12 = false;
+    bool isTopLeftEdge23 = false;
+    bool isTopLeftEdge31 = false;
+
+    if (_dy12 < 0 || (_dy12 == 0 && _dx12 >0)) isTopLeftEdge12 = true;
+    if (_dy23 < 0 || (_dy23 == 0 && _dx23 >0)) isTopLeftEdge23 = true;
+    if (_dy31 < 0 || (_dy31 == 0 && _dx31 >0)) isTopLeftEdge31 = true;
+
+    for (int x = minX; x < maxX; x++) {
+        for (int y = minY; y < maxY; y++) {
+
+            if ((isTopLeftEdge12 &&
+                std::abs(_dx12 * (y - _p1.y) - _dy12 * (x - _p1.x)) <= epsilon &&
+                _dx23 * (y - _p2.y) - _dy23 * (x - _p2.x) >= -epsilon &&
+                _dx31 * (y - _p3.y) - _dy31 * (x - _p3.x) >= -epsilon) ||
+                (isTopLeftEdge23 &&
+                _dx12 * (y - _p1.y) - _dy12 * (x - _p1.x) >= -epsilon &&
+                std::abs(_dx23 * (y - _p2.y) - _dy23 * (x - _p2.x)) <= epsilon &&
+                _dx31 * (y - _p3.y) - _dy31 * (x - _p3.x) >= -epsilon) ||
+                (isTopLeftEdge31 &&
+                _dx12 * (y - _p1.y) - _dy12 * (x - _p1.x) >= -epsilon &&
+                _dx23 * (y - _p2.y) - _dy23 * (x - _p2.x) >= -epsilon &&
+                std::abs(_dx31 * (y - _p3.y) - _dy31 * (x - _p3.x)) <= epsilon) ||
+                (_dx12 * (y - _p1.y) - _dy12 * (x - _p1.x) >= -epsilon &&
+                 _dx23 * (y - _p2.y) - _dy23 * (x - _p2.x) >= -epsilon &&
+                 _dx31 * (y - _p3.y) - _dy31 * (x - _p3.x) >= -epsilon )) {
+
+                float xNorm = 2.0f * (x / static_cast<float>(buffer.getWidth())) - 1.0f;
+                float yNorm = 2.0f * (y / static_cast<float>(buffer.getHeight())) - 1.0f;
+
+                float _b1 = (dy23 * (xNorm - p3.x) + dx32 * (yNorm - p3.y)) / (dy23 * dx13 + dx32 * dy13);
+                float _b2 = (dy31 * (xNorm - p3.x) + dx13 * (yNorm - p3.y)) / (dy31 * dx23 + dx13 * dy23);
+                float _b3 = 1 - _b1 - _b2;
+
+                _b1 = std::clamp(_b1, 0.0f, 1.0f);
+                _b2 = std::clamp(_b2, 0.0f, 1.0f);
+                _b3 = std::clamp(_b3, 0.0f, 1.0f);
+
+                // Sum normalization:
+                float sum = _b1 + _b2 + _b3;
+                if (sum > 0.0f) {
+                    _b1 /= sum;
+                    _b2 /= sum;
+                    _b3 /= sum;
+                }
+
+                // PHONG here
+
+                Math::float3 resultColor = {0.0f, 0.0f, 0.0f};
+
+                Math::float3 p1Float = { p1.x, p1.y, p1.z };
+                Math::float3 p2Float = { p2.x, p2.y, p2.z };
+                Math::float3 p3Float = { p3.x, p3.y, p3.z };
+
+                Math::float3 currentFragmentPosition = _b1 * p1Float + _b2 * p2Float + _b3 * p3Float;
+                Math::float3 currentFragmentNormal = _b1 * normal1 + _b2 * normal2 + _b3 * normal3;
+
+                Vertex fragment(currentFragmentPosition,currentFragmentNormal);
+
+                for (const auto& light : lights) {
+                    resultColor += light->calculate(fragment, material, cameraPos);
+                }
+
+
+                resultColor = {
+                    std::clamp(resultColor.x, 0.0f, 1.0f),
+                    std::clamp(resultColor.y, 0.0f, 1.0f),
+                    std::clamp(resultColor.z, 0.0f, 1.0f)
+                };
+
+
+                Math::Integer3 resultColorInt = {
+                    static_cast<int>(std::round(resultColor.x * 255.0f)),
+                    static_cast<int>(std::round(resultColor.y * 255.0f)),
+                    static_cast<int>(std::round(resultColor.z * 255.0f))
+                };
+
+
+                float depth = _b1 * _p1.z + _b2 * _p2.z + _b3 * _p3.z;
+                int targetIndex = y * buffer.getWidth() + x;
+
+                if (depth < buffer.getDepth(targetIndex)) {
+                    buffer.fillSingleColor(targetIndex, resultColorInt.x, resultColorInt.y, resultColorInt.z, 255 );
+                    buffer.setDepth(targetIndex, depth);
+                 }
             }
         }
     }

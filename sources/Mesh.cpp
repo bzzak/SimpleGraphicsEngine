@@ -1,5 +1,5 @@
 #include "../headers/Mesh.h"
-
+#include "../headers/Rasterizer.h"
 #include <cmath>
 
 #include "../headers/Vertex.h"
@@ -79,6 +79,27 @@ void Mesh::drawPhong(Rasterizer& rasterizer, const std::vector<Light*>& lights) 
     }
 
     rasterizer.resetTransformations();
+}
+
+void Mesh::drawPhongPixel(Rasterizer& rasterizer, const std::vector<Light*>& lights) const {
+    for (int i = 0; i < tSize; i++) {
+
+        std::vector<Vertex> triangleVertices;
+        triangleVertices.push_back(vertices[indices[i].x]);
+        triangleVertices.push_back(vertices[indices[i].y]);
+        triangleVertices.push_back(vertices[indices[i].z]);
+        std::vector<Math::float3> resultColors = {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}};
+
+        Math::Point p1 = Math::Point(triangleVertices[0].position.x, triangleVertices[0].position.y, triangleVertices[0].position.z);
+        Math::Point p2 = Math::Point(triangleVertices[1].position.x, triangleVertices[1].position.y, triangleVertices[1].position.z);
+        Math::Point p3 = Math::Point(triangleVertices[2].position.x, triangleVertices[2].position.y, triangleVertices[2].position.z);
+
+
+        rasterizer.trianglePhong(p1, p2, p3,  triangleVertices[0].normal, triangleVertices[1].normal, triangleVertices[2].normal, material, rasterizer.getEye(), lights);
+    }
+
+    rasterizer.resetTransformations();
+
 }
 
 void Mesh::makeNormals() {

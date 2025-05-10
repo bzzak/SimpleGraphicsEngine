@@ -34,7 +34,7 @@ int main() {
 
     auto* directionalLight1 = new DirectionalLight({0.0f, -1.0f, -2.0f});
     directionalLight1->setAmbientColor({0.05f, 0.05f, 0.05f});
-    directionalLight1->setDiffuseColor({0.7f, 0.7f, 0.7f});
+    directionalLight1->setDiffuseColor({1.0f, 1.0f, 1.0f});
     directionalLight1->setSpecularColor({0.2f, 0.2f, 0.2f});
 
     lights.push_back(directionalLight1);
@@ -61,17 +61,18 @@ int main() {
     //cube->rotate(simpleRasterizer, 45.0f, {0.0f, 1.0f, 0.0f});
     //cube->rotate(simpleRasterizer, 45.0f, {1.0f, 0.0f, 0.0f});
 
-    Mesh* cone = new Cone(50);
+    Mesh* cone = new Cone(20);
     cone->makeNormals();
 
+    cone->loadTexture("troll.tga");
     cone->setDiffuseColor({0.0f, 0.0f, 1.0f});
     cone->setSpecularColor({0.25f, 0.25f, 0.25f});
     cone->setShininess(16.0f);
 
     cone->scale(simpleRasterizer,{1.0f, 1.0f, 1.0f});
     cone->uniformScale(simpleRasterizer,0.75f);
-    cone->rotate(simpleRasterizer, -30.0f, {1.0f, 0.0f, 0.0f});
-    cone->translate(simpleRasterizer, {0.6f, 2.5f, -0.5f});
+    cone->translate(simpleRasterizer, {0.4f, 0.8f, 0.0f});
+    cone->rotate(simpleRasterizer, 180.0f, {0.0f, 1.0f, 0.0f});
 
    // Mesh* cylinder = new Cylinder(30,6);
     //cylinder->makeNormals();
@@ -82,6 +83,7 @@ int main() {
     Mesh* sphere = new Sphere(30, 30);
     sphere->makeNormals();
 
+    sphere->loadTexture("earth.tga");
     sphere->setDiffuseColor({0.0f, 1.0f, 1.0f});
     sphere->setSpecularColor({0.6f, 0.6f, 0.6f});
     sphere->setShininess(64.0f);
@@ -96,6 +98,7 @@ int main() {
     Mesh* sphere2 = new Sphere(30, 30);
     sphere2->makeNormals();
 
+    sphere2->loadTexture("earth.tga");
     sphere2->setDiffuseColor({0.0f, 1.0f, 1.0f});
     sphere2->setSpecularColor({0.6f, 0.6f, 0.6f});
     sphere2->setShininess(64.0f);
@@ -110,6 +113,7 @@ int main() {
     Mesh* torus = new Torus(30, 30);
     torus->makeNormals();
 
+    torus->loadTexture("earth.tga");
     torus->setDiffuseColor({1.0f, 1.0f, 0.0f});
     torus->setSpecularColor({1.0f, 1.0f, 1.0f});
     torus->setShininess(128.0f);
@@ -125,17 +129,24 @@ int main() {
     //cube->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
     cone->setTransformations(simpleRasterizer);
     //cone->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
+    //cone->draw(simpleRasterizer);
+    //cone->drawPixel(simpleRasterizer);
+    //cone->drawPhong(simpleRasterizer, lights);
     cone->drawPhongPixel(simpleRasterizer, lights);
     //cylinder->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
     sphere->setTransformations(simpleRasterizer);
     //sphere->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
+    //sphere->draw(simpleRasterizer);
+    //sphere->drawPixel(simpleRasterizer);
     sphere->drawPhongPixel(simpleRasterizer, lights);
     sphere2->setTransformations(simpleRasterizer);
     //sphere2->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
-    sphere2->drawPhong(simpleRasterizer, lights);
+    //sphere2->drawPhong(simpleRasterizer, lights);
     torus->setTransformations(simpleRasterizer);
     //torus->draw(simpleRasterizer, {255, 255, 0}, {0, 255, 255}, {255, 0, 255});
-    torus->drawPhongPixel(simpleRasterizer, lights);
+    torus->drawPixel(simpleRasterizer);
+    //torus->drawPhong(simpleRasterizer, lights);
+    //torus->drawPhongPixel(simpleRasterizer, lights);
 
 
 

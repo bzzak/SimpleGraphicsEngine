@@ -37,4 +37,6 @@ add_executable(MiAGK sources/main.cpp
         sources/DirectionalLight.cpp
         headers/PointLight.h
         sources/PointLight.cpp
+        headers/Texture.h
+        sources/Texture.cpp
 )

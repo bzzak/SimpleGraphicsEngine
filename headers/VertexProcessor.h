@@ -2,6 +2,7 @@
 #define VERTEXPROCESSOR_H
 
 #include "../headers/Math.h"
+#include "../headers/Vertex.h"
 
 class VertexProcessor {
 private:
@@ -12,9 +13,15 @@ private:
 public:
     VertexProcessor();
     ~VertexProcessor() = default;
-
+    void convertVertexToView(Vertex& vertex) const;
+    void convertVertexToNDC(Vertex& vertex) const;
+    void convertVertexToWorld(Vertex& vertex) const;
     Math::Point convertViewToNDC(Math::Point viewCoord);
     Math::Point convertObjToNDC(Math::Point objCoord);
+
+    Math::float4x4 getObject2world() const;
+    Math::float4x4 getWorld2view() const;
+    Math::float4x4 getView2proj() const;
 
     void setPerspective(float fovy, float aspect, float near, float far);
     void setLookAt(Math::float3 eye, Math::float3 center, Math::float3 up);

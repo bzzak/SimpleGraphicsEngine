@@ -1,6 +1,9 @@
 #include <cmath>
 
 #include "../headers/Torus.h"
+
+#include <iostream>
+
 #include "../headers/Vertex.h"
 #include "../headers/Math.h"
 
@@ -35,6 +38,12 @@ Torus::Torus(int verticalSides, int horizontalSides) : Mesh() {
             float z = (R + r * cosV) * sinU;
 
             vertices[i * verticalSides + j].position = {x, y, z};
+
+
+            // Calculate UV coordinates
+            float uCoord = static_cast<float>(i) / verticalSides;
+            float vCoord = static_cast<float>(j) / horizontalSides;
+            vertices[i * horizontalSides + j].uvCoords = {uCoord, vCoord};
         }
     }
 
@@ -55,4 +64,12 @@ Torus::Torus(int verticalSides, int horizontalSides) : Mesh() {
             indices[indicesCounter++] = Math::Integer3(current, diag, next);
         }
     }
+
+
+    //std::cout << "Vertex Numbers: " << vSize << std::endl;
+    //for (int i = 0; i < tSize; i++) {
+    //    std::cout << i << " : " << indices[i].x << ", " << indices[i].y << ", " << indices[i].z << std::endl;
+
+    //}
+
 }

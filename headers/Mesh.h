@@ -7,6 +7,7 @@
 #include "../headers/Light.h"
 //#include "../headers/Rasterizer.h"
 #include "../headers/Vertex.h"
+#include "../headers/Texture.h"
 
 class Rasterizer;
 
@@ -21,6 +22,8 @@ class Mesh {
 protected:
     int vSize;
     int tSize;
+    bool hasTexture = false;
+    Texture* texture;
     Material material;
     Vertex* vertices;
     Math::Integer3* indices;
@@ -35,7 +38,14 @@ public:
      ~Mesh() {
         delete[] vertices;
         delete[] indices;
+        if (texture != nullptr) delete texture;
     }
+
+    bool loadTexture(const std::string& filename);
+    void setTexture(const Texture& tex);
+    bool enableTexturing() { if (texture != nullptr){hasTexture = true; return true;}  return false; }
+    void disableTexturing() { hasTexture = false; }
+    bool isTexturingEnabled() const { return hasTexture; }
 
     Vertex* getVertices() const { return vertices; }
     Math::Integer3* getIndices() const { return indices; }
@@ -44,6 +54,8 @@ public:
 
     void draw(Rasterizer& rasterizer, Math::Integer3 color1, Math::Integer3 color2, Math::Integer3 color3) const;
     void draw(Rasterizer& rasterizer, Math::Integer3 color) const;
+    void draw(Rasterizer& rasterizer) const;
+    void drawPixel(Rasterizer& rasterizer) const;
     void drawPhong(Rasterizer& rasterizer, const std::vector<Light*>& lights) const;
     void drawPhongPixel(Rasterizer& rasterizer, const std::vector<Light*>& lights) const;
 

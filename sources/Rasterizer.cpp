@@ -1,5 +1,8 @@
 #include "../headers/Rasterizer.h"
 
+#include <cmath>
+#include <iostream>
+
 // Constructors
 
 Rasterizer::Rasterizer(int w, int h) : buffer(TgaBuffer(w, h)) {
@@ -10,9 +13,56 @@ Rasterizer::Rasterizer(int w, int h) : buffer(TgaBuffer(w, h)) {
 
 // Buffer
 
+float Rasterizer::wrapCoords(float coord) const {
+    if (coord < 0.0f) {
+        coord = 1.0f - (std::fmod(-coord, 1.0f));
+    }
+    return std::fmod(coord, 1.0f);
+}
+
 void Rasterizer::setBackground(unsigned int r, unsigned int g, unsigned int b, unsigned int a) const {
     buffer.fillColor(r,g,b,a);
 }
+
+Math::Integer3 Rasterizer::sampleTexture(float u, float v) const {
+    // Return transparent black if texturing is disabled or no active texture
+    if (!texturingEnabled || !activeTexture) {
+
+        return {0, 0, 0};
+    }
+
+    // Validate texture dimensions
+    if (activeTexture->getWidth() <= 0 || activeTexture->getHeight() <= 0) {
+        std::cerr << "Invalid texture dimensions" << std::endl;
+        return {0, 0, 0};
+    }
+
+    // Wrap texture coordinates
+    u = wrapCoords(u);
+    v = wrapCoords(v);
+
+    // Sample texture with error handling
+    try {
+        unsigned int texColor = activeTexture->sampleBilinear(u, v);
+        // If the sampled color is fully transparent, return transparent black
+        if ((texColor >> 24) == 0) {
+            return {0,0,0};
+        }
+
+        Math::Integer3 texColorInt3 = {0, 0, 0};
+
+        texColorInt3.x = (texColor >> 16) & 0xFF;
+        texColorInt3.y = (texColor >> 8) & 0xFF;
+        texColorInt3.z = texColor & 0xFF;
+
+        return texColorInt3;
+    } catch (const std::exception& e) {
+        std::cerr << "Error sampling texture: " << e.what() << std::endl;
+        return {0,0,0};
+    }
+}
+
+
 
 int Rasterizer::save() {
     return buffer.save();

@@ -18,6 +18,70 @@ void VertexProcessor::resetTransformations() {
     obj2world.loadIdentity();
 }
 
+Math::float4x4 VertexProcessor::getObject2world() const { return obj2world; }
+
+Math::float4x4 VertexProcessor::getWorld2view() const { return world2view; }
+
+Math::float4x4 VertexProcessor::getView2proj() const { return view2proj; }
+
+
+
+void VertexProcessor::convertVertexToWorld(Vertex &vertex) const{
+    Math::float4 objFloat= {vertex.position.x, vertex.position.y, vertex.position.z, 1.0};
+    Math::float4 objFloatNormal = {vertex.normal.x, vertex.normal.y, vertex.normal.z, 1.0};
+
+    Math::float4 worldFloat= obj2world * objFloat;
+    Math::float4 worldFloatNormal= obj2world * objFloatNormal;
+
+    Math::float3 worldPosition= {worldFloat.x, worldFloat.y, worldFloat.z};
+    Math::float3 worldNormal= {worldFloatNormal.x, worldFloatNormal.y, worldFloatNormal.z};
+    worldNormal.normalize();
+
+    vertex.setPosition(worldPosition);
+    vertex.setNormal(worldNormal);
+}
+
+void VertexProcessor::convertVertexToView(Vertex &vertex) const{
+    Math::float4 objFloat= {vertex.position.x, vertex.position.y, vertex.position.z, 1.0};
+    Math::float4 objFloatNormal = {vertex.normal.x, vertex.normal.y, vertex.normal.z, 1.0};
+
+    Math::float4 worldFloat= obj2world * objFloat;
+    Math::float4 worldFloatNormal= obj2world * objFloatNormal;
+
+    Math::float4 viewFloat= world2view * worldFloat;
+    Math::float4 viewFloatNormal= world2view * worldFloatNormal;
+
+    Math::float3 viewPosition= {viewFloat.x, viewFloat.y, viewFloat.z};
+    Math::float3 viewNormal= {viewFloatNormal.x, viewFloatNormal.y, viewFloatNormal.z};
+    viewNormal.normalize();
+
+    vertex.setPosition(viewPosition);
+    vertex.setNormal(viewNormal);
+}
+
+void VertexProcessor::convertVertexToNDC(Vertex &vertex) const{
+    Math::float4 objFloat= {vertex.position.x, vertex.position.y, vertex.position.z, 1.0};
+    Math::float4 objFloatNormal = {vertex.normal.x, vertex.normal.y, vertex.normal.z, 1.0};
+
+    Math::float4 worldFloat= obj2world * objFloat;
+    Math::float4 worldFloatNormal= obj2world * objFloatNormal;
+
+    Math::float4 viewFloat= world2view * worldFloat;
+    Math::float4 viewFloatNormal= world2view * worldFloatNormal;
+
+    Math::float4 projFloat= view2proj * viewFloat;
+    Math::float4 projFloatNormal= view2proj * viewFloatNormal;
+
+    Math::float3 ndcPosition= {projFloat.x / projFloat.w, projFloat.y / projFloat.w, projFloat.z / projFloat.w};
+    Math::float3 ndcNormal= {projFloatNormal.x / projFloatNormal.w, projFloatNormal.y / projFloatNormal.w, projFloatNormal.z / projFloatNormal.w};
+    ndcNormal.normalize();
+
+    vertex.setPosition(ndcPosition);
+    vertex.setNormal(ndcNormal);
+}
+
+
+
 Math::Point VertexProcessor::convertObjToNDC(Math::Point objCoord) {
     Math::float4 objFloat= {objCoord.x, objCoord.y, objCoord.z, 1.0};
     Math::float4 worldFloat= obj2world * objFloat;

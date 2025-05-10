@@ -3,8 +3,11 @@
 
 #include <algorithm>
 #include "Math.h"
+#include "Texture.h"
 #include "Vertex.h"
 
+
+class Rasterizer;
 struct Material;
 
 class Light {
@@ -16,6 +19,7 @@ protected:
 public:
 
     virtual ~Light() = default;
+    virtual Math::float3 calculate(Vertex& vertex, const Material& material, const Math::float3& cameraPos, const Rasterizer& rasterizer) const = 0;
     virtual Math::float3 calculate(Vertex& vertex, const Material& material, const Math::float3& cameraPos) const = 0;
 
     void setAmbientColor(Math::float3 color) { ambient = {std::clamp(color.x, 0.0f, 1.0f), std::clamp(color.y, 0.0f, 1.0f), std::clamp(color.z, 0.0f, 1.0f) }; }

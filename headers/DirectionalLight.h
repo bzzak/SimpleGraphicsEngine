@@ -11,6 +11,7 @@ public:
     ~DirectionalLight() override = default;
 
     Math::float3 calculate(Vertex& vertex, const Material& material, const Math::float3& cameraPos) const override;
+    Math::float3 calculate(Vertex& vertex, const Material& material, const Math::float3& cameraPos, const Rasterizer& rasterizer) const override;
 };
 
 #endif //DIRECTIONALLIGHT_H
